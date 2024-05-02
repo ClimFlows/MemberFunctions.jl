@@ -1,24 +1,27 @@
 import MemberFunctions: WithMembers, member_functions
 using Test
 
-# declare that `MyType` has member functions
-struct MyType <: WithMembers end
-member_functions(::Type{<:MyType}) = (; hello, goodbye)
+# declare that `Say` has member functions
+struct Say <: WithMembers
+    you::String
+end
+member_functions(::Type{<:Say}) = (; hello, goodbye)
 
 # implement member functions as normal Julia functions
 # taking the object as first argument
 
 """
-    hello(::MyType)
-    MyType().hello()
+    hello(::Say)
+    Say(yourname).hello()
 """
-hello(::MyType) = println("Hello !")
-goodbye(::MyType) = println("Goodbye !")
+hello((;you)::Say) = println("Hello, $you !")
+goodbye((;you)::Say) = println("Goodbye, $you !")
 
 @testset "MemberFunctions.jl" begin
-    o = MyType()
-    o.hello()   |> isnothing && @test true
-    o.goodbye() |> isnothing && @test true
-    show(Docs.doc(o.hello))
-    show(o.hello)
+    say = Say("you")
+    say.hello()   |> isnothing && @test true
+    say.goodbye() |> isnothing && @test true
+    show(Docs.doc(say.hello)) |> isnothing || @test true
+    show(say.hello) |> isnothing || @test true
+    @test_throws MethodError Docs.Binding(say, :you)
 end
