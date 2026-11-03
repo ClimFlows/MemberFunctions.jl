@@ -1,5 +1,6 @@
 import MemberFunctions: WithMembers, member_functions
 using Test
+using REPL # Loads the Docs.doc methods needed on Julia 1.11 and later.
 
 # declare that `Say` has member functions
 struct Say <: WithMembers
